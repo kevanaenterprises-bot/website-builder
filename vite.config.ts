@@ -10,17 +10,6 @@ export default defineConfig({
     },
   },
   build: {
-    chunkSizeWarningLimit: 600,
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          'vendor-react': ['react', 'react-dom'],
-          'vendor-ui': ['@blinkdotnew/ui'],
-          'vendor-motion': ['framer-motion'],
-          'vendor-charts': ['recharts'],
-          'vendor-router': ['@tanstack/react-router', '@tanstack/react-query'],
-        },
-      },
-    },
+    chunkSizeWarningLimit: 2000,
   },
 })
