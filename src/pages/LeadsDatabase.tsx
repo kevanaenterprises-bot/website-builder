@@ -6,10 +6,11 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Persona,
 } from '@blinkdotnew/ui'
-import { Database, Phone, Star, MapPin, Clock, ExternalLink, Edit3, Check } from 'lucide-react'
+import { Database, Phone, Star, MapPin, Clock, ExternalLink, Edit3, Check, Bell, BellOff } from 'lucide-react'
 import { useNavigate } from '@tanstack/react-router'
 import { blink } from '@/blink/client'
 import { LEADS } from '../data/leads'
+import { getNotifyEmail, setNotifyEmail, sendStatusChangeEmail } from '@/hooks/useNotifications'
 
 const STATUS_OPTIONS = [
   { value: '🔴 Not Contacted', label: '🔴 Not Contacted' },
@@ -42,15 +43,30 @@ export default function LeadsDatabase() {
   const queryClient = useQueryClient()
   const [editLead, setEditLead] = useState<any>(null)
   const [newStatus, setNewStatus] = useState('')
+  const [notifyEmail, setNotifyEmailState] = useState(getNotifyEmail)
+  const [notifyEmailInput, setNotifyEmailInput] = useState(getNotifyEmail)
+  const [showNotifyBanner, setShowNotifyBanner] = useState(false)
+  const [notifySent, setNotifySent] = useState(false)
 
   const leads = LEADS
-  const isLoading = false
 
   const updateStatus = useMutation({
     mutationFn: ({ id, status }: { id: string; status: string }) =>
       blink.db.leads.update(id, { status }),
-    onSuccess: () => {
+    onSuccess: async (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['leads-db'] })
+      const email = getNotifyEmail()
+      if (email && editLead) {
+        const sent = await sendStatusChangeEmail({
+          toEmail: email,
+          businessName: editLead.business_name,
+          oldStatus: editLead.status,
+          newStatus: variables.status,
+          phone: editLead.phone,
+          category: editLead.category,
+        })
+        if (sent) setNotifySent(true)
+      }
       setEditLead(null)
     },
   })
@@ -129,12 +145,73 @@ export default function LeadsDatabase() {
   return (
     <Page className="animate-fade-in">
       <PageHeader>
-        <VStack gap={1}>
-          <PageTitle>Leads Database</PageTitle>
-          <PageDescription>Full record of all {leads.length} scouted businesses in Frisco, TX. Update status after each call.</PageDescription>
-        </VStack>
+        <HStack className="items-start justify-between w-full">
+          <VStack gap={1}>
+            <PageTitle>Leads Database</PageTitle>
+            <PageDescription>Full record of all {leads.length} scouted businesses in Frisco, TX. Update status after each call.</PageDescription>
+          </VStack>
+          <Button
+            variant={notifyEmail ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setShowNotifyBanner(v => !v)}
+            className="flex-shrink-0 mt-1"
+          >
+            {notifyEmail ? <Bell className="h-4 w-4 mr-2" /> : <BellOff className="h-4 w-4 mr-2" />}
+            {notifyEmail ? 'Alerts On' : 'Enable Alerts'}
+          </Button>
+        </HStack>
       </PageHeader>
       <PageBody>
+        {showNotifyBanner && (
+          <div className="mb-4 p-4 rounded-xl border border-primary/20 bg-primary/5 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+            <Bell className="h-5 w-5 text-primary flex-shrink-0 mt-0.5 sm:mt-0" />
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-foreground">Email notifications for status changes</p>
+              <p className="text-xs text-muted-foreground">You'll get an email every time a lead status is updated.</p>
+            </div>
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <input
+                type="email"
+                value={notifyEmailInput}
+                onChange={e => setNotifyEmailInput(e.target.value)}
+                placeholder="your@email.com"
+                className="flex-1 sm:w-56 px-3 py-1.5 text-sm border border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/30"
+              />
+              <Button
+                size="sm"
+                onClick={() => {
+                  setNotifyEmail(notifyEmailInput)
+                  setNotifyEmailState(notifyEmailInput)
+                  setShowNotifyBanner(false)
+                }}
+                disabled={!notifyEmailInput}
+              >
+                Save
+              </Button>
+              {notifyEmail && (
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => {
+                    setNotifyEmail('')
+                    setNotifyEmailState('')
+                    setNotifyEmailInput('')
+                    setShowNotifyBanner(false)
+                  }}
+                >
+                  Turn Off
+                </Button>
+              )}
+            </div>
+          </div>
+        )}
+        {notifySent && (
+          <div className="mb-4 p-3 rounded-lg border border-green-200 bg-green-50 flex items-center gap-2 text-green-700 text-sm font-medium">
+            <Check className="h-4 w-4" />
+            Email notification sent to {notifyEmail}
+            <button onClick={() => setNotifySent(false)} className="ml-auto text-green-500 hover:text-green-700 text-xs">✕</button>
+          </div>
+        )}
         <Card>
           <CardContent className="pt-6">
             <HStack gap={2} className="items-center mb-6">
@@ -142,7 +219,7 @@ export default function LeadsDatabase() {
               <h3 className="font-bold text-lg">All Leads</h3>
               <Badge variant="outline" className="ml-auto">{leads.length} records</Badge>
             </HStack>
-            <DataTable columns={columns} data={leads} loading={isLoading} searchable searchColumn="business_name" />
+            <DataTable columns={columns} data={leads} searchable searchColumn="business_name" />
           </CardContent>
         </Card>
       </PageBody>
