@@ -1,11 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import {
   Page, PageHeader, PageTitle, PageDescription, PageBody,
   DataTable, StatGroup, Stat, Button, Badge,
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
   Card, CardContent, VStack, HStack
 } from '@blinkdotnew/ui'
-import { LayoutDashboard, Phone, Star, MessageSquare, ExternalLink, FileText, TrendingUp, Users, CheckCircle2 } from 'lucide-react'
+import { Phone, Star, MessageSquare, ExternalLink, FileText, TrendingUp, Users, CheckCircle2 } from 'lucide-react'
 import { useNavigate } from '@tanstack/react-router'
 import { LEADS } from '../data/leads'
 
@@ -15,13 +15,12 @@ export default function Dashboard() {
   const [isScriptOpen, setIsScriptOpen] = useState(false)
 
   const leads = LEADS
-  const isLoading = false
 
   const totalLeads = leads.length
-  const contactedLeads = leads.filter((l: any) => l?.status === 'contacted').length
+  const contactedLeads = leads.filter((l: any) => l?.status === '✅ Closed').length
   const conversionRate = totalLeads > 0 ? ((contactedLeads / totalLeads) * 100).toFixed(1) : '0'
 
-  const columns = [
+  const columns = useMemo(() => [
     {
       accessorKey: 'business_name',
       header: 'Business',
@@ -88,7 +87,7 @@ export default function Dashboard() {
         </HStack>
       )
     }
-  ]
+  ], [navigate, setSelectedLead, setIsScriptOpen])
 
   return (
     <Page className="animate-fade-in">
@@ -106,41 +105,42 @@ export default function Dashboard() {
         </StatGroup>
         <Card>
           <CardContent className="pt-6">
-            <DataTable columns={columns} data={leads} loading={isLoading} searchable searchColumn="business_name" />
+            <DataTable columns={columns} data={leads} searchable searchColumn="business_name" />
           </CardContent>
         </Card>
-        <Dialog open={isScriptOpen} onOpenChange={setIsScriptOpen}>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <MessageSquare className="h-5 w-5 text-primary" />
-                Sales Script: {selectedLead?.business_name}
-              </DialogTitle>
-              <DialogDescription>Use this tailored script for your initial outreach call.</DialogDescription>
-            </DialogHeader>
-            <div className="space-y-6 py-4">
-              <section className="bg-muted p-4 rounded-lg border border-border">
-                <h4 className="font-bold text-sm uppercase tracking-wider text-muted-foreground mb-3">Opening (Phase 4 Hook)</h4>
-                <p className="text-lg leading-relaxed italic">
-                  "Hey, I was looking at <span className="text-primary font-bold">{selectedLead?.business_name}</span> and noticed you have <span className="font-bold">{selectedLead?.google_rating} stars</span> with <span className="font-bold">{selectedLead?.review_count} reviews</span>. I actually built a premium version of your site to show you how much better it could look. Can I send you the link?"
-                </p>
-              </section>
-              <section className="bg-primary/5 p-4 rounded-lg border border-primary/20">
-                <h4 className="font-bold text-sm uppercase tracking-wider text-primary mb-3">The Pitch (Phase 5 Rejection Handler)</h4>
-                <p className="text-lg leading-relaxed">
-                  "Most of your competitors are using modern, fast-loading sites. Your current site is missing <span className="font-bold underline text-secondary">{selectedLead?.hook || 'a clear call-to-action'}</span>. I've fixed that in the preview."
-                </p>
-              </section>
-              <div className="flex justify-end gap-3">
-                <Button variant="outline" onClick={() => setIsScriptOpen(false)}>Close</Button>
-                <Button onClick={() => { window.open(`/preview/${selectedLead?.id}`, '_blank'); setIsScriptOpen(false) }}>
-                  Open Preview Link
-                </Button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
       </PageBody>
+
+      <Dialog open={isScriptOpen} onOpenChange={setIsScriptOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <MessageSquare className="h-5 w-5 text-primary" />
+              Sales Script: {selectedLead?.business_name}
+            </DialogTitle>
+            <DialogDescription>Use this tailored script for your initial outreach call.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-6 py-4">
+            <section className="bg-muted p-4 rounded-lg border border-border">
+              <h4 className="font-bold text-sm uppercase tracking-wider text-muted-foreground mb-3">Opening (Phase 4 Hook)</h4>
+              <p className="text-lg leading-relaxed italic">
+                "Hey, I was looking at <span className="text-primary font-bold">{selectedLead?.business_name}</span> and noticed you have <span className="font-bold">{selectedLead?.google_rating} stars</span> with <span className="font-bold">{selectedLead?.review_count} reviews</span>. I actually built a premium version of your site to show you how much better it could look. Can I send you the link?"
+              </p>
+            </section>
+            <section className="bg-primary/5 p-4 rounded-lg border border-primary/20">
+              <h4 className="font-bold text-sm uppercase tracking-wider text-primary mb-3">The Pitch (Phase 5 Rejection Handler)</h4>
+              <p className="text-lg leading-relaxed">
+                "Most of your competitors are using modern, fast-loading sites. Your current site is missing <span className="font-bold underline text-secondary">{selectedLead?.hook || 'a clear call-to-action'}</span>. I've fixed that in the preview."
+              </p>
+            </section>
+            <div className="flex justify-end gap-3">
+              <Button variant="outline" onClick={() => setIsScriptOpen(false)}>Close</Button>
+              <Button onClick={() => { window.open(`/preview/${selectedLead?.id}`, '_blank'); setIsScriptOpen(false) }}>
+                Open Preview Link
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Page>
   )
 }
