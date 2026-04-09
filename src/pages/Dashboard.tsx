@@ -75,16 +75,24 @@ export default function Dashboard() {
       id: 'actions',
       header: 'Actions',
       cell: ({ row }: any) => (
-        <HStack gap={2}>
-          <Button variant="outline" size="sm" onClick={() => { setSelectedLead(row.original); setIsScriptOpen(true) }}>
-            <FileText className="h-4 w-4 mr-2" />
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md border border-border bg-background hover:bg-muted transition-colors cursor-pointer"
+            onPointerDown={(e) => { e.stopPropagation(); setSelectedLead(row.original); setIsScriptOpen(true) }}
+          >
+            <FileText className="h-3.5 w-3.5" />
             Call Script
-          </Button>
-          <Button variant="default" size="sm" onClick={() => navigate({ to: `/preview/${row.original.id}` })}>
-            <ExternalLink className="h-4 w-4 mr-2" />
+          </button>
+          <button
+            type="button"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors cursor-pointer"
+            onPointerDown={(e) => { e.stopPropagation(); navigate({ to: `/preview/${row.original.id}` }) }}
+          >
+            <ExternalLink className="h-3.5 w-3.5" />
             View Preview
-          </Button>
-        </HStack>
+          </button>
+        </div>
       )
     }
   ], [navigate, setSelectedLead, setIsScriptOpen])

@@ -333,7 +333,8 @@ export default function SitePreview() {
               {category} · {address.split(',').slice(-2).join(',').trim()}
             </p>
             <HStack gap={4} className="justify-center flex-wrap">
-              <Button size="lg" className="h-13 px-8 text-lg rounded-full font-semibold shadow-2xl" style={{ backgroundColor: primaryColor, color: '#fff' }}>
+              <Button size="lg" className="h-13 px-8 text-lg rounded-full font-semibold shadow-2xl" style={{ backgroundColor: primaryColor, color: '#fff' }}
+                onClick={() => phone ? window.location.href = `tel:${phone}` : document.getElementById('contact-section')?.scrollIntoView({ behavior: 'smooth' })}>
                 {ctaLabel}
                 <ChevronRight className="h-5 w-5 ml-1" />
               </Button>
@@ -449,7 +450,7 @@ export default function SitePreview() {
       </section>
 
       {/* Contact / Hours */}
-      <section className="py-24 bg-white">
+      <section id="contact-section" className="py-24 bg-white">
         <Container>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
@@ -457,15 +458,17 @@ export default function SitePreview() {
               <h3 className="text-4xl font-bold mb-8 text-gray-900">Visit Us Today</h3>
               <VStack gap={5}>
                 {phone && (
-                  <HStack gap={4} className="items-center">
-                    <div className="h-12 w-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${primaryColor}18` }}>
-                      <Phone className="h-5 w-5" style={{ color: primaryColor }} />
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500 uppercase font-bold tracking-wider mb-0.5">Phone</p>
-                      <p className="font-semibold text-gray-900">{phone}</p>
-                    </div>
-                  </HStack>
+                  <a href={`tel:${phone}`} className="no-underline w-full">
+                    <HStack gap={4} className="items-center hover:opacity-80 transition-opacity">
+                      <div className="h-12 w-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: `${primaryColor}18` }}>
+                        <Phone className="h-5 w-5" style={{ color: primaryColor }} />
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500 uppercase font-bold tracking-wider mb-0.5">Phone</p>
+                        <p className="font-semibold text-gray-900">{phone}</p>
+                      </div>
+                    </HStack>
+                  </a>
                 )}
                 <HStack gap={4} className="items-center">
                   <div className="h-12 w-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${primaryColor}18` }}>
@@ -495,7 +498,8 @@ export default function SitePreview() {
               </div>
               <p className="text-5xl font-bold text-gray-900 mb-2">{rating}</p>
               <p className="text-gray-500 mb-6">Based on {reviewCount} Google reviews</p>
-              <Button className="rounded-full px-8" style={{ backgroundColor: primaryColor }}>
+              <Button className="rounded-full px-8" style={{ backgroundColor: primaryColor }}
+                onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`, '_blank')}>
                 <Navigation className="h-4 w-4 mr-2" />
                 Get Directions
               </Button>
