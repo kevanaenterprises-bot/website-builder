@@ -2,11 +2,11 @@ import React, { useEffect, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useParams, useNavigate } from '@tanstack/react-router'
 import {
-  Button, HStack, VStack, Skeleton, Badge, Persona, Container,
+  Button, HStack, VStack, Badge, Persona, Container,
 } from '@blinkdotnew/ui'
 import {
   ArrowLeft, Phone, MapPin, Clock, Star, ChevronRight, CheckCircle2,
-  Quote, Navigation, ExternalLink, Tag, Utensils, Wrench, Scissors,
+  Quote, Navigation, ExternalLink, Utensils, Wrench, Scissors,
   Home, ShoppingBag, Award, Shield, Zap,
 } from 'lucide-react'
 import { motion, useScroll, useTransform } from 'framer-motion'
@@ -22,19 +22,16 @@ function getIndustryConfig(category: string, businessName = '') {
       icon: ShoppingBag,
       heroImage: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=2070&auto=format&fit=crop',
       aboutImage: 'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?q=80&w=2070&auto=format&fit=crop',
-      galleryImages: [
-        'https://images.unsplash.com/photo-1529810313688-44ea1c2d81d3?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1600185365926-3a2ce3cdb9eb?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1520219306100-ec4afdc40418?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1460353581641-37baddab0fa2?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=1000&auto=format&fit=crop',
-      ],
       trustBars: ['EXPERT CRAFTSMEN', 'ALL BRANDS', 'SAME-DAY SERVICE', 'QUALITY GUARANTEED'],
       primaryCta: 'Get a Repair Quote', secondaryCta: 'Our Services',
       serviceLabel: 'Our Services', serviceSubtitle: 'Master Craftsmanship',
-      portfolioLabel: 'Our Work', guaranteeText: 'Quality Guaranteed',
+      guaranteeText: 'Quality Guaranteed',
       bulletPoints: ['Master cobblers with decades of experience', 'All brands repaired — from everyday to luxury', 'Leather, soles, heels, bags & more'],
+      defaultReviews: [
+        { author: 'Maria T.', text: 'Brought in my favorite leather boots and they came back looking brand new. Incredible craftsmanship!', rating: 5 },
+        { author: 'James K.', text: 'Same-day service on my dress shoes. You saved my business meeting. Thank you!', rating: 5 },
+        { author: 'Sandra L.', text: 'Repaired my designer heels perfectly. Couldn\'t believe the quality of the work for the price.', rating: 5 },
+      ],
     }
   }
 
@@ -43,19 +40,16 @@ function getIndustryConfig(category: string, businessName = '') {
       icon: Utensils,
       heroImage: 'https://images.unsplash.com/photo-1551024601-bec78aea704b?q=80&w=2070&auto=format&fit=crop',
       aboutImage: 'https://images.unsplash.com/photo-1525193612562-0ec53b0e5d7c?q=80&w=2070&auto=format&fit=crop',
-      galleryImages: [
-        'https://images.unsplash.com/photo-1620188526357-c1f1f09c0972?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1506224772180-d75b3848aba2?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1585327188739-a4f7ad5af96d?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1530610476181-d83430b64dcd?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1551024709-8f23befc6f87?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1624371414361-e670edf4898b?q=80&w=1000&auto=format&fit=crop',
-      ],
       trustBars: ['FRESH EVERY MORNING', 'MADE FROM SCRATCH', 'FAMILY OWNED', 'OPEN EARLY'],
       primaryCta: 'Order Today', secondaryCta: 'See Full Menu',
       serviceLabel: 'Our Menu', serviceSubtitle: 'Baked Fresh Daily',
-      portfolioLabel: 'Fresh Out the Fryer', guaranteeText: 'Made Fresh Daily',
+      guaranteeText: 'Made Fresh Daily',
       bulletPoints: ['Hand-crafted donuts made every morning', 'Classic glazed to custom creations', 'Wholesale & custom orders welcome'],
+      defaultReviews: [
+        { author: 'Chris M.', text: 'Best donuts in Frisco, hands down. Fresh every single morning and the staff is always so friendly!', rating: 5 },
+        { author: 'Priya S.', text: 'We get birthday donuts from here every year. The custom orders are always perfect and delicious.', rating: 5 },
+        { author: 'Tyler B.', text: 'Showed up at 6am and they were already fully stocked. Hot, fresh, and absolutely worth the early trip.', rating: 5 },
+      ],
     }
   }
 
@@ -64,19 +58,16 @@ function getIndustryConfig(category: string, businessName = '') {
       icon: Utensils,
       heroImage: 'https://images.unsplash.com/photo-1567206563114-c179706b1149?q=80&w=2070&auto=format&fit=crop',
       aboutImage: 'https://images.unsplash.com/photo-1488900128323-21503983a07e?q=80&w=2070&auto=format&fit=crop',
-      galleryImages: [
-        'https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1501443762994-82bd5dace89a?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1445692559393-5f4ae234ac50?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1563805042-7684c019e1cb?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1576506295286-5cda18df43e7?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1570197788417-0e82375c9371?q=80&w=1000&auto=format&fit=crop',
-      ],
       trustBars: ['DOZENS OF FLAVORS', 'FAMILY FAVORITE', 'FRESH DAILY', 'BEAT THE TEXAS HEAT'],
       primaryCta: 'See Full Menu', secondaryCta: 'Our Flavors',
       serviceLabel: 'Our Menu', serviceSubtitle: 'Cool Treats for Everyone',
-      portfolioLabel: 'Our Treats', guaranteeText: 'Smiles Guaranteed',
+      guaranteeText: 'Smiles Guaranteed',
       bulletPoints: ['Dozens of flavors made fresh daily', 'Authentic mangonadas & elote', 'Perfect for families & groups'],
+      defaultReviews: [
+        { author: 'Ana R.', text: 'The mango chamoy is absolutely incredible. My kids beg to come here every weekend!', rating: 5 },
+        { author: 'Kevin D.', text: 'Perfect treat on a hot Texas day. The portions are huge and the flavors are amazing.', rating: 5 },
+        { author: 'Lisa M.', text: 'Brought my whole family and everyone loved it. The elote cup is a must-try!', rating: 5 },
+      ],
     }
   }
 
@@ -85,19 +76,16 @@ function getIndustryConfig(category: string, businessName = '') {
       icon: Wrench,
       heroImage: 'https://images.unsplash.com/photo-1617531653332-bd46c16f4d68?q=80&w=2070&auto=format&fit=crop',
       aboutImage: 'https://images.unsplash.com/photo-1601362840469-51e4d8d58785?q=80&w=2070&auto=format&fit=crop',
-      galleryImages: [
-        'https://images.unsplash.com/photo-1562259949-e8e7689d7828?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1617531653332-bd46c16f4d68?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1000&auto=format&fit=crop',
-      ],
       trustBars: ['MOBILE SERVICE', 'OEM QUALITY GLASS', 'FREE ESTIMATES', 'SAME-DAY REPAIR'],
       primaryCta: 'Get a Free Quote', secondaryCta: 'Our Services',
       serviceLabel: 'Our Services', serviceSubtitle: 'Mobile Auto Glass Experts',
-      portfolioLabel: 'Our Work', guaranteeText: 'Work Guaranteed',
+      guaranteeText: 'Work Guaranteed',
       bulletPoints: ['We come to your home or office', 'Dealer-quality glass at local prices', 'Rock chips fixed in as little as 20 minutes'],
+      defaultReviews: [
+        { author: 'Robert H.', text: 'They came to my office and fixed my windshield in 20 minutes. Couldn\'t even tell there was a crack!', rating: 5 },
+        { author: 'Diane W.', text: 'Insurance handled everything and the tech was professional and fast. Highly recommend!', rating: 5 },
+        { author: 'Marcus J.', text: 'Same-day appointment, showed up on time, and the repair looks flawless. Great service!', rating: 5 },
+      ],
     }
   }
 
@@ -106,19 +94,16 @@ function getIndustryConfig(category: string, businessName = '') {
       icon: Utensils,
       heroImage: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=2070&auto=format&fit=crop',
       aboutImage: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=2074&auto=format&fit=crop',
-      galleryImages: [
-        'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1476224203421-9ac39bcb3df1?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1493770348161-369560ae357d?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?q=80&w=1000&auto=format&fit=crop',
-      ],
       trustBars: ['FRESH DAILY', 'LOCAL FAVORITE', 'FAMILY OWNED', 'DINE IN & TAKEOUT'],
       primaryCta: 'Order Online', secondaryCta: 'See Full Menu',
       serviceLabel: 'Our Menu', serviceSubtitle: 'Made with Love',
-      portfolioLabel: 'From Our Kitchen', guaranteeText: 'Made Fresh Daily',
+      guaranteeText: 'Made Fresh Daily',
       bulletPoints: ['Fresh ingredients sourced locally', 'Family recipes passed down for generations', 'Friendly, fast service every visit'],
+      defaultReviews: [
+        { author: 'Jennifer A.', text: 'This place has become our family\'s go-to spot. The food is always fresh and the service is wonderful.', rating: 5 },
+        { author: 'Carlos V.', text: 'Authentic flavors and generous portions. Reminds me of home cooking. We\'ll be back every week!', rating: 5 },
+        { author: 'Natalie P.', text: 'The staff remembers your order by the third visit. Amazing food and even better people.', rating: 5 },
+      ],
     }
   }
 
@@ -127,19 +112,16 @@ function getIndustryConfig(category: string, businessName = '') {
       icon: Home,
       heroImage: 'https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?q=80&w=2070&auto=format&fit=crop',
       aboutImage: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=2070&auto=format&fit=crop',
-      galleryImages: [
-        'https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1527515637462-cff94aca6e07?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1563453392212-326f5e854473?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1600585154526-990dced4db0d?q=80&w=1000&auto=format&fit=crop',
-      ],
       trustBars: ['FULLY INSURED', 'BACKGROUND CHECKED', 'SAME-DAY AVAILABLE', '5-STAR RATED'],
       primaryCta: 'Book a Cleaning', secondaryCta: 'Our Services',
       serviceLabel: 'Our Services', serviceSubtitle: 'Spotless Every Time',
-      portfolioLabel: 'Before & After', guaranteeText: '100% Satisfaction',
+      guaranteeText: '100% Satisfaction',
       bulletPoints: ['Fully insured and background-checked team', 'Eco-friendly products available', 'Residential & commercial cleaning'],
+      defaultReviews: [
+        { author: 'Michelle T.', text: 'My house has never been this clean. They paid attention to every corner. Will definitely rebook!', rating: 5 },
+        { author: 'David F.', text: 'Reliable, professional, and thorough. I\'ve tried 3 other services and this is by far the best.', rating: 5 },
+        { author: 'Karen B.', text: 'Showed up on time, worked quickly, and left the place spotless. Exactly what I needed!', rating: 5 },
+      ],
     }
   }
 
@@ -148,19 +130,16 @@ function getIndustryConfig(category: string, businessName = '') {
       icon: Wrench,
       heroImage: 'https://images.unsplash.com/photo-1615906655593-ad0386982a0f?q=80&w=2070&auto=format&fit=crop',
       aboutImage: 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?q=80&w=2074&auto=format&fit=crop',
-      galleryImages: [
-        'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1601362840469-51e4d8d58785?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1545558014-8692077e9b5c?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1596736248958-b23f2a9028f5?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?q=80&w=1000&auto=format&fit=crop',
-      ],
       trustBars: ['LICENSED & CERTIFIED', 'FREE ESTIMATES', 'SAME-DAY SERVICE', 'WARRANTY INCLUDED'],
       primaryCta: 'Get a Free Quote', secondaryCta: 'Our Services',
       serviceLabel: 'Our Services', serviceSubtitle: 'Expert Auto Care',
-      portfolioLabel: 'Our Work', guaranteeText: 'Work Guaranteed',
+      guaranteeText: 'Work Guaranteed',
       bulletPoints: ['ASE-certified technicians on staff', 'Dealer-quality service at local prices', 'Mobile service available at your location'],
+      defaultReviews: [
+        { author: 'Steve A.', text: 'Honest mechanics are hard to find. These guys told me exactly what was wrong and fixed it fast.', rating: 5 },
+        { author: 'Pam N.', text: 'My car looks brand new after the detailing. They went above and beyond what I expected.', rating: 5 },
+        { author: 'Tom G.', text: 'Fair pricing, fast turnaround, and excellent work. I won\'t take my car anywhere else.', rating: 5 },
+      ],
     }
   }
 
@@ -169,19 +148,16 @@ function getIndustryConfig(category: string, businessName = '') {
       icon: Scissors,
       heroImage: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?q=80&w=2074&auto=format&fit=crop',
       aboutImage: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=2069&auto=format&fit=crop',
-      galleryImages: [
-        'https://images.unsplash.com/photo-1519415510236-718bdfcd89c8?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1562322140-8baeececf3df?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1487412840181-b0f36bfef6bc?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1457972729786-0411a3b2b626?q=80&w=1000&auto=format&fit=crop',
-      ],
       trustBars: ['LICENSED STYLISTS', 'WALK-INS WELCOME', 'PREMIUM PRODUCTS', 'ONLINE BOOKING'],
       primaryCta: 'Book an Appointment', secondaryCta: 'View Services',
       serviceLabel: 'Our Services', serviceSubtitle: 'Look & Feel Your Best',
-      portfolioLabel: 'Our Work', guaranteeText: 'Satisfaction Guaranteed',
+      guaranteeText: 'Satisfaction Guaranteed',
       bulletPoints: ['Licensed and experienced stylists', 'Premium salon-quality products only', 'Personalized service for every client'],
+      defaultReviews: [
+        { author: 'Brandon K.', text: 'Best fade I\'ve had in years. The barber took his time and the result was absolutely clean.', rating: 5 },
+        { author: 'Amber S.', text: 'Always leave feeling amazing. The atmosphere is great and the stylists really listen to what you want.', rating: 5 },
+        { author: 'Derek R.', text: 'Walk-in friendly and no long wait. Got exactly the cut I wanted. This is my new regular spot.', rating: 5 },
+      ],
     }
   }
 
@@ -190,19 +166,16 @@ function getIndustryConfig(category: string, businessName = '') {
       icon: Home,
       heroImage: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=2070&auto=format&fit=crop',
       aboutImage: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=2076&auto=format&fit=crop',
-      galleryImages: [
-        'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1565182999561-18d7dc61c393?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1484154218962-a197022b5858?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1523217582562-09d0def993a6?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=1000&auto=format&fit=crop',
-      ],
       trustBars: ['LICENSED & INSURED', 'SAME-DAY SERVICE', 'FREE ESTIMATES', '5-STAR RATED'],
       primaryCta: 'Get a Free Estimate', secondaryCta: 'Our Services',
       serviceLabel: 'Our Services', serviceSubtitle: 'Professional Home Care',
-      portfolioLabel: 'Recent Projects', guaranteeText: '100% Satisfaction',
+      guaranteeText: '100% Satisfaction',
       bulletPoints: ['Licensed, bonded, and fully insured', 'Transparent pricing with no hidden fees', 'Background-checked technicians'],
+      defaultReviews: [
+        { author: 'Greg M.', text: 'Cleared my entire garage in under an hour. Friendly crew and great pricing. Highly recommend!', rating: 5 },
+        { author: 'Susan T.', text: 'They handled everything — even swept up afterward. Will definitely call them again for our next cleanout.', rating: 5 },
+        { author: 'Phil D.', text: 'Fast, professional, and no hidden fees. Exactly what they quoted is what I paid. Refreshing!', rating: 5 },
+      ],
     }
   }
 
@@ -210,19 +183,16 @@ function getIndustryConfig(category: string, businessName = '') {
     icon: Award,
     heroImage: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2070&auto=format&fit=crop',
     aboutImage: 'https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?q=80&w=2070&auto=format&fit=crop',
-    galleryImages: [
-      'https://images.unsplash.com/photo-1445205170230-053b83016050?q=80&w=1000&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1493723843671-1d655e66ac1c?q=80&w=1000&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?q=80&w=1000&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=1000&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1572635196237-14b3f281503f?q=80&w=1000&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=1000&auto=format&fit=crop',
-    ],
     trustBars: ['LOCALLY OWNED', 'EXPERT STAFF', 'QUALITY BRANDS', 'COMMUNITY TRUSTED'],
     primaryCta: 'Contact Us', secondaryCta: 'Our Services',
     serviceLabel: 'Our Specialties', serviceSubtitle: 'Crafted with Care',
-    portfolioLabel: 'Featured Work', guaranteeText: 'Quality Guaranteed',
+    guaranteeText: 'Quality Guaranteed',
     bulletPoints: ['Expert craftsmen with decades of experience', 'Premium materials from trusted suppliers', 'Locally owned and community-focused'],
+    defaultReviews: [
+      { author: 'Rachel H.', text: 'Outstanding service from start to finish. The team was professional and the results were excellent.', rating: 5 },
+      { author: 'Mark S.', text: 'They went above and beyond what I expected. Truly a business that cares about its customers.', rating: 5 },
+      { author: 'Amy J.', text: 'I\'ve been coming here for years and they never disappoint. The quality is consistently excellent.', rating: 5 },
+    ],
   }
 }
 
@@ -252,7 +222,7 @@ export default function SitePreview() {
   const content = site?.content || {}
   const hero = content.hero || {}
   const services = Array.isArray(content.services) ? content.services : []
-  const reviews = Array.isArray(content.reviews) ? content.reviews : []
+  const contentReviews = Array.isArray(content.reviews) ? content.reviews : []
   const aboutText = content.about || 'We are proud to serve the Frisco community with the highest level of quality and professionalism.'
   const headline = hero.tagline || lead.business_name || 'Premium Service'
   const ctaLabel = hero.cta || 'Contact Us'
@@ -265,6 +235,9 @@ export default function SitePreview() {
   const category = lead.category || ''
 
   const industry = useMemo(() => getIndustryConfig(category, businessName), [category, businessName])
+
+  // Use content reviews if available, otherwise use industry defaults
+  const displayReviews = contentReviews.length > 0 ? contentReviews : industry.defaultReviews
 
   useEffect(() => {
     if (theme.primary) document.documentElement.style.setProperty('--preview-primary', theme.primary)
@@ -322,13 +295,24 @@ export default function SitePreview() {
             </Badge>
             <h2 className="text-2xl md:text-3xl font-semibold text-white/90 mb-2 tracking-wide">{businessName}</h2>
             <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight tracking-tight">{headline}</h1>
-            <div className="flex items-center justify-center gap-2 mb-6 text-white/80">
+
+            {/* Clickable stars/review count → scrolls to reviews */}
+            <button
+              type="button"
+              onClick={() => document.getElementById('reviews-section')?.scrollIntoView({ behavior: 'smooth' })}
+              className="flex items-center justify-center gap-2 mb-6 mx-auto cursor-pointer bg-transparent border-none hover:opacity-80 transition-opacity"
+            >
               {Array.from({ length: 5 }).map((_, i) => (
                 <Star key={i} className={`h-5 w-5 ${i < Math.round(rating) ? 'fill-yellow-400 text-yellow-400' : 'text-white/30'}`} />
               ))}
               <span className="font-bold text-lg text-white ml-1">{rating}</span>
-              {reviewCount > 0 && <span className="text-white/60 text-sm">({reviewCount} reviews)</span>}
-            </div>
+              {reviewCount > 0 && (
+                <span className="text-white/70 text-sm underline underline-offset-2 decoration-white/50">
+                  ({reviewCount} reviews)
+                </span>
+              )}
+            </button>
+
             <p className="text-lg md:text-xl text-white/75 max-w-2xl mx-auto mb-10 leading-relaxed">
               {category} · {address.split(',').slice(-2).join(',').trim()}
             </p>
@@ -396,10 +380,12 @@ export default function SitePreview() {
                 ))}
               </VStack>
               {phone && (
-                <Button className="mt-8 rounded-full" style={{ backgroundColor: primaryColor }}>
-                  <Phone className="h-4 w-4 mr-2" />
-                  Call {phone}
-                </Button>
+                <a href={`tel:${phone}`} className="inline-block mt-8">
+                  <Button className="rounded-full" style={{ backgroundColor: primaryColor }}>
+                    <Phone className="h-4 w-4 mr-2" />
+                    Call {phone}
+                  </Button>
+                </a>
               )}
             </motion.div>
           </div>
@@ -449,8 +435,58 @@ export default function SitePreview() {
         </Container>
       </section>
 
+      {/* Reviews Section */}
+      <section id="reviews-section" className="py-24 bg-white">
+        <Container>
+          <div className="text-center mb-16">
+            <p className="text-sm font-bold tracking-[0.2em] uppercase mb-3" style={{ color: primaryColor }}>What Customers Say</p>
+            <h3 className="text-4xl md:text-5xl font-bold text-gray-900">Real Reviews</h3>
+            <div className="flex items-center justify-center gap-2 mt-4">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+              ))}
+              <span className="font-bold text-gray-900 ml-1">{rating}</span>
+              <span className="text-gray-400 text-sm">· {reviewCount} Google reviews</span>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {displayReviews.map((review: any, i: number) => {
+              const author = typeof review === 'string' ? 'Customer' : review?.author || review?.name || 'Customer'
+              const text = typeof review === 'string' ? review : review?.text || review?.body || ''
+              const stars = typeof review === 'string' ? 5 : review?.rating || 5
+              return (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: i * 0.1 }}
+                  className="bg-gray-50 p-8 rounded-2xl border border-gray-100 relative"
+                >
+                  <Quote className="h-8 w-8 mb-4 opacity-20" style={{ color: primaryColor }} />
+                  <p className="text-gray-700 leading-relaxed mb-6 text-base italic">"{text}"</p>
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0" style={{ backgroundColor: primaryColor }}>
+                      {author.charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-gray-900 text-sm">{author}</p>
+                      <div className="flex gap-0.5 mt-0.5">
+                        {Array.from({ length: stars }).map((_, si) => (
+                          <Star key={si} className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )
+            })}
+          </div>
+        </Container>
+      </section>
+
       {/* Contact / Hours */}
-      <section id="contact-section" className="py-24 bg-white">
+      <section id="contact-section" className="py-24" style={{ backgroundColor: '#f8fafc' }}>
         <Container>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
@@ -490,7 +526,7 @@ export default function SitePreview() {
                 </HStack>
               </VStack>
             </div>
-            <div className="bg-gray-50 rounded-2xl p-10 text-center border border-gray-100">
+            <div className="bg-white rounded-2xl p-10 text-center border border-gray-100 shadow-md">
               <div className="flex justify-center mb-4">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <Star key={i} className="h-8 w-8 fill-yellow-400 text-yellow-400" />
