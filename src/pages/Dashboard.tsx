@@ -1,7 +1,7 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState } from 'react'
 import {
   Page, PageHeader, PageTitle, PageDescription, PageBody,
-  DataTable, StatGroup, Stat, Button, Badge,
+  StatGroup, Stat, Button, Badge,
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
   Card, CardContent, VStack, HStack
 } from '@blinkdotnew/ui'
@@ -13,89 +13,22 @@ export default function Dashboard() {
   const navigate = useNavigate()
   const [selectedLead, setSelectedLead] = useState<any>(null)
   const [isScriptOpen, setIsScriptOpen] = useState(false)
+  const [search, setSearch] = useState('')
 
   const leads = LEADS
-
   const totalLeads = leads.length
   const contactedLeads = leads.filter((l: any) => l?.status === '✅ Closed').length
   const conversionRate = totalLeads > 0 ? ((contactedLeads / totalLeads) * 100).toFixed(1) : '0'
 
-  const columns = useMemo(() => [
-    {
-      accessorKey: 'business_name',
-      header: 'Business',
-      cell: ({ row }: any) => (
-        <div className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-            <span className="text-primary font-bold text-sm">
-              {(row.original?.business_name || 'U').charAt(0)}
-            </span>
-          </div>
-          <div>
-            <p className="font-semibold text-sm text-foreground leading-tight">
-              {row.original?.business_name || 'Unknown'}
-            </p>
-            <p className="text-xs text-muted-foreground leading-tight mt-0.5">
-              {row.original?.category || ''}
-            </p>
-          </div>
-        </div>
-      )
-    },
-    {
-      accessorKey: 'phone',
-      header: 'Phone',
-      cell: ({ row }: any) => (
-        <span className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-          <Phone className="h-3 w-3" />
-          {row.original.phone || '—'}
-        </span>
-      )
-    },
-    {
-      accessorKey: 'rating',
-      header: 'Rating',
-      cell: ({ row }: any) => (
-        <HStack gap={1} className="items-center">
-          <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-          <span className="text-sm font-semibold">{row.original.google_rating}</span>
-          <span className="text-xs text-muted-foreground">({row.original.review_count} reviews)</span>
-        </HStack>
-      )
-    },
-    {
-      accessorKey: 'status',
-      header: 'Status',
-      cell: ({ row }: any) => {
-        const status = row.original.status || 'new'
-        return <Badge variant="outline" className="capitalize">{status}</Badge>
-      }
-    },
-    {
-      id: 'actions',
-      header: 'Actions',
-      cell: ({ row }: any) => (
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md border border-border bg-background hover:bg-muted transition-colors cursor-pointer"
-            onPointerDown={(e) => { e.stopPropagation(); setSelectedLead(row.original); setIsScriptOpen(true) }}
-          >
-            <FileText className="h-3.5 w-3.5" />
-            Call Script
-          </button>
-          <button
-            type="button"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors cursor-pointer"
-            onPointerDown={(e) => { e.stopPropagation(); navigate({ to: `/preview/${row.original.id}` }) }}
-          >
-            <ExternalLink className="h-3.5 w-3.5" />
-            View Preview
-          </button>
-        </div>
-      )
-    }
-  ], [navigate, setSelectedLead, setIsScriptOpen])
+  const filtered = leads.filter(l =>
+    l.business_name.toLowerCase().includes(search.toLowerCase()) ||
+    l.category.toLowerCase().includes(search.toLowerCase())
+  )
+
+  function openScript(lead: any) {
+    setSelectedLead(lead)
+    setIsScriptOpen(true)
+  }
 
   return (
     <Page className="animate-fade-in">
@@ -111,9 +44,92 @@ export default function Dashboard() {
           <Stat label="Contacted" value={contactedLeads.toString()} icon={<CheckCircle2 className="text-secondary" />} />
           <Stat label="Outreach Rate" value={`${conversionRate}%`} icon={<TrendingUp className="text-accent" />} trend={12} trendLabel="vs last week" />
         </StatGroup>
+
         <Card>
           <CardContent className="pt-6">
-            <DataTable columns={columns} data={leads} searchable searchColumn="business_name" />
+            {/* Search */}
+            <div className="mb-4">
+              <input
+                type="text"
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                placeholder="Search businesses..."
+                className="w-full max-w-sm px-3 py-2 text-sm border border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/30"
+              />
+            </div>
+
+            {/* Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="text-left py-3 px-3 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Business</th>
+                    <th className="text-left py-3 px-3 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Phone</th>
+                    <th className="text-left py-3 px-3 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Rating</th>
+                    <th className="text-left py-3 px-3 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Status</th>
+                    <th className="text-left py-3 px-3 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filtered.map((lead) => (
+                    <tr key={lead.id} className="border-b border-border/50 hover:bg-muted/30 transition-colors">
+                      <td className="py-3 px-3">
+                        <div className="flex items-center gap-3">
+                          <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                            <span className="text-primary font-bold text-sm">{lead.business_name.charAt(0)}</span>
+                          </div>
+                          <div>
+                            <p className="font-semibold text-foreground leading-tight">{lead.business_name}</p>
+                            <p className="text-xs text-muted-foreground leading-tight mt-0.5">{lead.category}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-3 px-3">
+                        <span className="text-muted-foreground flex items-center gap-1.5">
+                          <Phone className="h-3 w-3" />
+                          {lead.phone || '—'}
+                        </span>
+                      </td>
+                      <td className="py-3 px-3">
+                        <div className="flex items-center gap-1">
+                          <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                          <span className="font-semibold">{lead.google_rating}</span>
+                          <span className="text-xs text-muted-foreground">({lead.review_count})</span>
+                        </div>
+                      </td>
+                      <td className="py-3 px-3">
+                        <Badge variant="outline" className="capitalize text-xs">{lead.status}</Badge>
+                      </td>
+                      <td className="py-3 px-3">
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => openScript(lead)}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md border border-border bg-background hover:bg-muted transition-colors"
+                          >
+                            <FileText className="h-3.5 w-3.5" />
+                            Call Script
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => navigate({ to: `/preview/${lead.id}` })}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                          >
+                            <ExternalLink className="h-3.5 w-3.5" />
+                            View Preview
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                  {filtered.length === 0 && (
+                    <tr>
+                      <td colSpan={5} className="py-12 text-center text-muted-foreground text-sm">No leads found.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </CardContent>
         </Card>
       </PageBody>

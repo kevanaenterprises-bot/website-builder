@@ -334,7 +334,7 @@ export default function SitePreview() {
             </p>
             <HStack gap={4} className="justify-center flex-wrap">
               <Button size="lg" className="h-13 px-8 text-lg rounded-full font-semibold shadow-2xl" style={{ backgroundColor: primaryColor, color: '#fff' }}
-                onClick={() => phone ? window.location.href = `tel:${phone}` : document.getElementById('contact-section')?.scrollIntoView({ behavior: 'smooth' })}>
+                onClick={() => document.getElementById('contact-section')?.scrollIntoView({ behavior: 'smooth' })}>
                 {ctaLabel}
                 <ChevronRight className="h-5 w-5 ml-1" />
               </Button>
